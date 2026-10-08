@@ -147,7 +147,6 @@ The legacy standalone runner's connection and motion behaviour is also unvalidat
 
 ## Release boundaries
 
-Code availability does not establish redistribution rights for models, scores or
-third-party material. No repository-wide open-source license is declared.
-Preserve scientific citations, embedded attribution and third-party notices.
-This code snapshot does not establish anonymity.
+No repository-wide license is currently specified. Please retain existing
+citations, attribution, and license notices, and check the terms for any models,
+musical scores, or third-party materials before reuse.
