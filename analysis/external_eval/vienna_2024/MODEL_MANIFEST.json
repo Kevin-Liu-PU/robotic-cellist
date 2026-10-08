@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "record_type": "historical_model_and_source_provenance",
+  "note": "References identify recorded source artifacts; they are not filesystem paths or runtime configuration. SHA-256 values and sizes are preserved from the historical manifest and do not validate the current checkout, evaluation, or model availability. Entries ending in '_revision' hash historical hub reference files, not model weights. Original entry labels describe their recorded roles, not a new evaluation claim.",
+  "artifacts": {
+    "training_checkpoint": {
+      "reference": "repository:SoundClassifier/checkpoints/quality_cnn_multilength.pt",
+      "sha256": "19daf209c9ad035ef700573423469ac30257c5d67ae84d97c94418745be9132d",
+      "size_bytes": 192396
+    },
+    "heldout_checkpoint": {
+      "reference": "repository:SoundClassifier/checkpoints/quality_cnn_human_A1_A5.pt",
+      "sha256": "d8bc969129387b1b2e3f5636941d691841672cdb8e89b4b9fbc90fac42cb226a",
+      "size_bytes": 192268
+    },
+    "classifier": {
+      "reference": "repository:SoundClassifier/classifier.py",
+      "sha256": "c4d3a6240f3ee9993f6760b2feb369edf79e893ccce1a1775f316a6a4ec8f5d5",
+      "size_bytes": 8322
+    },
+    "classifier_architecture": {
+      "reference": "repository:SoundClassifier/quality_classifier.py",
+      "sha256": "cf3d4aebe38dc74e22499fdb59415534648ce89fdde9b7b63c46a7916ebafea2",
+      "size_bytes": 6351
+    },
+    "audio_features": {
+      "reference": "repository:SoundClassifier/audio_features.py",
+      "sha256": "a28ce83501583f811e5bdcd75afecc2fcd2b92e4243740f26592befb8270c643",
+      "size_bytes": 13432
+    },
+    "dataset": {
+      "reference": "repository:SoundClassifier/dataset.py",
+      "sha256": "0f6cfd8faa8119fb88148b3000cd549eaafecaac86d56d395f464c3e010e42b7",
+      "size_bytes": 17252
+    },
+    "posthoc_score": {
+      "reference": "repository:rl/posthoc_score.py",
+      "sha256": "63f9897c2b2eaf3987945eb748406b1e4bb441dab4e1f03dafbd35ab976ca9fc",
+      "size_bytes": 7811
+    },
+    "posthoc_heldout": {
+      "reference": "repository:rl/posthoc_heldout.py",
+      "sha256": "ee66ad2d33af5ec2b81439a50b917c1923e9fc95f7d900f7e379a2b5dbec4b66",
+      "size_bytes": 6565
+    },
+    "piece_env": {
+      "reference": "repository:rl/piece_env.py",
+      "sha256": "75ee053225621c36a852c2b58ae593812a4286f7f4a769df82404b70b07f37ad",
+      "size_bytes": 105141
+    },
+    "loudness_calibration": {
+      "reference": "repository:SoundClassifier/checkpoints/loudness_model.json",
+      "sha256": "3ff22274b44ad769671e5970e718d92e5f728dbcc229e77725e8cd7a8d0a2340",
+      "size_bytes": 1509
+    },
+    "existing_public_adapter": {
+      "reference": "external-source:external_judges/score_takes.py",
+      "sha256": "bc0b91edbf485632873f9bc17005f6884f12970b3f9eb0c04a4b1d7ea7ab1114",
+      "size_bytes": 7454
+    },
+    "pam_source": {
+      "reference": "external-source:external_judges/PAM/PAM/PAM.py",
+      "sha256": "3ebf9e03cbb2a796c3cbf9344222d7528c7c07b11ea3c1b7057e0c40a95a75ba",
+      "size_bytes": 8954
+    },
+    "pam_config": {
+      "reference": "external-source:external_judges/PAM/PAM/config.yml",
+      "sha256": "9501adef8afac0726acde0fe6870251bd655bdad0a18f11901bb3e60354ab62d",
+      "size_bytes": 440
+    },
+    "pam_dataset": {
+      "reference": "external-source:external_judges/PAM/dataset.py",
+      "sha256": "584f90562d9366fa0504ad94bb36c294aed703174a935fb1a944fefe848c11c3",
+      "size_bytes": 3701
+    },
+    "audiobox_source": {
+      "reference": "python-package:audiobox_aesthetics/infer.py",
+      "sha256": "0dd81c8952f0fdb9c706da5cae0b75b859e26720a6c08034dcfb23244f8c9733",
+      "size_bytes": 7440
+    },
+    "audiobox_weights": {
+      "reference": "model-hub:facebook/audiobox-aesthetics@9b1dd8e5df9af7216e836a98974fe3b82c56ded6/model.safetensors",
+      "sha256": "a5a3c2412649cc2384ec525ffd5180ce6c4778f43bed6108e0a1303de04d014e",
+      "size_bytes": 415472992
+    },
+    "audiobox_revision": {
+      "reference": "historical-hub-ref:facebook/audiobox-aesthetics/refs/main",
+      "sha256": "7d795ddaa003cb12364d07a8a95b0f073a8eb1da0e380c5773a47542340692b0",
+      "size_bytes": 40
+    },
+    "audiobox_config.json": {
+      "reference": "model-hub:facebook/audiobox-aesthetics@9b1dd8e5df9af7216e836a98974fe3b82c56ded6/config.json",
+      "sha256": "0b8eabc5ced92cefed116a3aca8f1e59d2a33dc4d376b9e86dfb9c072e1d280d",
+      "size_bytes": 492
+    },
+    "pam_weights": {
+      "reference": "model-hub:microsoft/msclap@c47d441165daa21986ead0850660917636a81775/CLAP_weights_2023.pth",
+      "sha256": "2cef4016d47d00eb28d153d522f397222057f95000e9bad6b9583c631284a1e6",
+      "size_bytes": 689950036
+    },
+    "pam_revision": {
+      "reference": "historical-hub-ref:microsoft/msclap/refs/main",
+      "sha256": "2ebb420879d0acb0679d6514708c54bf2e7077a5df83b6676c0e3041df48e533",
+      "size_bytes": 40
+    },
+    "gpt2_weights": {
+      "reference": "model-hub:gpt2@607a30d783dfa663caf39e06633721c8d4cfcd7e/model.safetensors",
+      "sha256": "248dfc3911869ec493c76e65bf2fcf7f615828b0254c12b473182f0f81d3a707",
+      "size_bytes": 548105171
+    },
+    "gpt2_revision": {
+      "reference": "historical-hub-ref:gpt2/refs/main",
+      "sha256": "2e3acc6f9be49ff0931763eed736f7b05157aa742d2d088fbcbb548b83f0b208",
+      "size_bytes": 40
+    },
+    "gpt2_config.json": {
+      "reference": "model-hub:gpt2@607a30d783dfa663caf39e06633721c8d4cfcd7e/config.json",
+      "sha256": "0daed7749b4f02b8f76240d5444551d7b08712dab4d0adb8239c56ba823bb7b4",
+      "size_bytes": 665
+    },
+    "gpt2_tokenizer.json": {
+      "reference": "model-hub:gpt2@607a30d783dfa663caf39e06633721c8d4cfcd7e/tokenizer.json",
+      "sha256": "8414cab924d8b9b33013f0d221c5862f365ee9be39c5c2bfae8a5a9e970478a6",
+      "size_bytes": 1355256
+    },
+    "gpt2_tokenizer_config.json": {
+      "reference": "model-hub:gpt2@607a30d783dfa663caf39e06633721c8d4cfcd7e/tokenizer_config.json",
+      "sha256": "5e04eb606e3a1583530a42e36c2a6b6615c86f34fe77e44d9ddeb43ff940931f",
+      "size_bytes": 26
+    },
+    "gpt2_merges.txt": {
+      "reference": "model-hub:gpt2@607a30d783dfa663caf39e06633721c8d4cfcd7e/merges.txt",
+      "sha256": "1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5",
+      "size_bytes": 456318
+    },
+    "gpt2_vocab.json": {
+      "reference": "model-hub:gpt2@607a30d783dfa663caf39e06633721c8d4cfcd7e/vocab.json",
+      "sha256": "196139668be63f3b5d6574427317ae82f612a97c5d1cdaf36ed2256dbf636783",
+      "size_bytes": 1042301
+    }
+  }
+}

@@ -1,0 +1,208 @@
+"""
+rl/loudness.py
+
+Closed-loop dynamics: measured loudness instead of assumed loudness.
+
+The planner maps a written dynamic to a bow speed with volume_to_speed(), a
+linear rule that squeezes p..f into the middle of an absolute ppp..fff axis
+and then never checks what actually came out of the instrument. Measured on
+t1 that is 3.5 dB of contrast -- audibly no dynamics at all.
+
+This module replaces the assumption with a fit to the 500 recordings in
+dataset_a_final (see SoundClassifier/checkpoints/loudness_model.json):
+
+    dBFS = a * 20log10(bow_speed) + b * depth_mm + d
+    standard config, n=100, R^2 = 0.892, residual sd 1.14 dB
+
+a ~ 1.13 confirms the calibration docstring's "amplitude proportional to bow
+speed"; b ~ 0.42 dB/mm makes depth worth about 1 dB across the whole safety
+envelope, i.e. a timbral trim rather than a dynamic lever.
+
+Inverting it turns a TARGET LOUDNESS into the speed that actually produces
+it, which spreads p..f over the full ~10 dB the instrument can reach instead
+of 3.5 dB.
+
+Dynamics are then judged in four discrete ZONES (p, mp, mf, f), each an equal
+2.5 dB slice of that reachable span. A stroke inside its zone is fully
+correct; outside, reward falls off with the dB distance to the nearest edge.
+Zones rather than a point target because the residual sd is 1.14 dB -- asking
+a stroke to hit an exact dBFS would be grading noise.
+
+CAVEATS, all real:
+  - bow_position is NOT in the model. Every dataset recording is a full-bow
+    stroke, so its midpoint is 0.535 +/- 0.0002; there is no variation to fit.
+    The RL plays partial strokes anywhere in u = 0.2..0.8, where leverage
+    genuinely differs, and that error is NOT in the 1.14 dB residual.
+  - The dataset is sustained full-bow strokes; RL strokes run 7..233 mm.
+  - NOTE DURATION is not in the model and matters more than anything else
+    left out of it. Measured 2026-08-18 on one instrumented yunpiece episode
+    (n=182, random actions, so speed and depth are decorrelated from the
+    score): regressing (measured - model) on log duration, bow speed and
+    depth gives +6.99 dB per DECADE of note length, R^2 0.50. A 0.111 s note
+    therefore reads ~6.7 dB quieter than a 1.0 s note at the same speed and
+    depth. By band:
+
+        0.00-0.15 s  n=128   -1.66 dB      0.30-0.60 s  n= 15   +2.43 dB
+        0.15-0.30 s  n= 29   +0.77 dB      0.60 s +     n= 10   +2.12 dB
+
+    Direction independently confirmed by tempo, which scales every duration:
+    across the 2026-08-18 blinded sweep, tempo 1.2 takes sit +0.57 dB above
+    tempo 1.0 where the coefficient predicts +0.55. The 1.1 takes do NOT fit
+    (+0.01 observed vs +0.29 predicted, against a within-group sd of 0.06),
+    so the effect is real and large across a wide duration range while the
+    LOG-LINEAR FORM is not validated over narrow ranges. Do not fit a
+    correction from this coefficient without more points.
+
+    Why it matters: the zones are 2.5 dB wide, 70% of yunpiece is under
+    0.15 s, and those notes are graded 1.66 dB too quiet on average. That is
+    a MEASUREMENT bias, not physics, so no residual the policy can play will
+    remove it -- the same unsatisfiable-penalty shape that duration-aware
+    dynamic targets and the onset fix were both written to remove.
+
+    It also explains why a single scalar gain offset cannot serve two pieces:
+    string_crossings.mid is 14 notes of 0.999 s and calibrated to +8.04 dB,
+    yunpiece.mxl has median 0.111 s and calibrates to +5.06 dB. That 2.98 dB
+    gap is the same effect, and calibrate_gain's own --write guard already
+    names it ("model nonlinearity, or duration-dependent bias").
+  - dBFS is absolute and therefore tied to THIS microphone and gain setting.
+    Change the interface, the gain, or the mic position and the zones must be
+    re-fitted or they will be silently wrong.
+"""
+
+from __future__ import annotations
+
+import json
+import math
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+MODEL_PATH = REPO_ROOT / "SoundClassifier" / "checkpoints" / "loudness_model.json"
+
+# Written dynamic -> one of the four zones. MuseScore's scale has eight
+# levels; the instrument can only resolve about four, so the extremes fold in.
+DYNAMIC_TO_ZONE = {
+    "ppp": "p", "pp": "p", "p": "p",
+    "mp": "mp",
+    "mf": "mf",
+    "f": "f", "ff": "f", "fff": "f",
+}
+ZONE_ORDER = ["p", "mp", "mf", "f"]
+
+
+class LoudnessModel:
+    """Fitted dBFS(speed, depth) with its inverse and the dynamic zones."""
+
+    def __init__(self, path: Path | str | None = None):
+        path = Path(path or MODEL_PATH)
+        if not path.exists():
+            raise FileNotFoundError(
+                f"No loudness model at {path}. Fit one from dataset_a_final "
+                f"before using closed-loop dynamics.")
+        data = json.loads(path.read_text())
+        c = data["coef"]
+        self.a, self.b, self.d = float(c["a"]), float(c["b"]), float(c["d"])
+        self.zones = data["zones"]
+        self.residual_sd_db = float(data["fit"]["residual_sd_db"])
+        self.speed_min, self.speed_max = data["speed_range"]
+        self.path = path
+        # Microphone gain offset, in dB, between the rig that recorded
+        # dataset_a_final and the rig measuring now.
+        #
+        # The zones are ABSOLUTE dBFS, so any change of interface, gain knob or
+        # mic position shifts every measurement bodily and no stroke can land
+        # in a zone. Measured on 2026-08-11 the current setup reads +4.20 dB
+        # hotter than the fit: strokes came in at -17.6 dBFS against a
+        # predicted -21.8, which is above even the `f` ceiling of -18.71 — so
+        # the dynamics reward was a constant zero and 0/14 strokes were in
+        # zone. That is not a low score, it is a dead term.
+        #
+        # Re-measure with calibrate_gain_offset() whenever the audio path
+        # changes. It is a property of the microphone, not of the playing.
+        self.gain_offset_db = float(data.get("gain_offset_db", 0.0))
+        # Provenance of the number above, so a run can print WHEN and on
+        # what it was measured. A gain offset carried over from another
+        # session or another piece is the failure this whole block
+        # describes, and it is invisible unless something says so.
+        self.gain_offset_note = str(data.get("gain_offset_note", ""))
+
+    # ── forward / inverse ────────────────────────────────────────
+
+    def predict_dbfs(self, speed: float, depth_m: float = 0.0005) -> float:
+        speed = max(float(speed), 1e-4)
+        return self.a * 20.0 * math.log10(speed) + self.b * (depth_m * 1000.0) + self.d
+
+    def invert_speed(self, target_dbfs: float, depth_m: float = 0.0005) -> float:
+        """Bow speed that produces `target_dbfs` at this depth, clamped to the
+        calibrated range so the answer is always interpolation."""
+        exponent = (target_dbfs - self.b * (depth_m * 1000.0) - self.d) / (20.0 * self.a)
+        speed = 10.0 ** exponent
+        return float(min(max(speed, self.speed_min), self.speed_max))
+
+    # ── zones ────────────────────────────────────────────────────
+
+    @staticmethod
+    def zone_for_dynamic(dynamic: str) -> str:
+        return DYNAMIC_TO_ZONE.get(dynamic, "mf")
+
+    def zone_bounds(self, zone: str) -> tuple[float, float]:
+        z = self.zones[zone]
+        return float(z["db_lo"]), float(z["db_hi"])
+
+    def zone_centre(self, zone: str) -> float:
+        return float(self.zones[zone]["db_centre"])
+
+    def target_speed_for_dynamic(self, dynamic: str,
+                                 depth_m: float = 0.0005) -> float:
+        """Feed-forward: the speed that should land this dynamic in its zone."""
+        return self.invert_speed(self.zone_centre(self.zone_for_dynamic(dynamic)),
+                                 depth_m)
+
+    def zone_reward(self, measured_dbfs: float, zone: str,
+                    falloff_db: float = 3.0,
+                    bounds: tuple[float, float] | None = None) -> float:
+        """
+        1.0 anywhere inside the zone, falling linearly to 0 once the stroke is
+        `falloff_db` outside the nearest edge.
+
+        Flat inside rather than peaked at the centre because the model's own
+        residual is 1.14 dB: rewarding sub-decibel precision would be
+        rewarding measurement noise, and would also punish the tone-driven
+        micro-adjustments the policy is supposed to be free to make.
+
+        `bounds` (model frame) overrides the zone's stored bounds — used for
+        duration-aware grading of notes that physically cannot reach the
+        written zone (the operator, 2026-08-13).
+        """
+        # Bring the measurement into the model's frame before comparing.
+        measured_dbfs = measured_dbfs - self.gain_offset_db
+        lo, hi = bounds if bounds is not None else self.zone_bounds(zone)
+        if lo <= measured_dbfs <= hi:
+            return 1.0
+        distance = (lo - measured_dbfs) if measured_dbfs < lo else (measured_dbfs - hi)
+        return float(max(0.0, 1.0 - distance / falloff_db))
+
+
+_MODEL: LoudnessModel | None = None
+
+
+def get_model() -> LoudnessModel:
+    global _MODEL
+    if _MODEL is None:
+        _MODEL = LoudnessModel()
+    return _MODEL
+
+
+def measure_dbfs(audio) -> float | None:
+    """
+    RMS level of a stroke, in dBFS.
+
+    MUST be given the raw capture. The classifier window is peak-normalised
+    (that is what the model was trained on), and normalising destroys exactly
+    the absolute level this is trying to measure.
+    """
+    import numpy as np
+    if audio is None or len(audio) == 0:
+        return None
+    a = np.asarray(audio, dtype=np.float64)
+    rms = float(np.sqrt(np.mean(a * a)))
+    return 20.0 * math.log10(max(rms, 1e-9))

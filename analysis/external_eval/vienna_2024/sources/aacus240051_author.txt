@@ -1,0 +1,848 @@
+Acta Acustica 2024, 8, 45
+Ó The Author(s), Published by EDP Sciences, 2024
+https://doi.org/10.1051/aacus/2024035
+
+
+Topical Issue - Musical Acoustics: Latest Advances in Analytical, Numerical                                             Available online at:
+and Experimental Methods Tackling Complex Phenomena in Musical Instruments                               https://acta-acustica.edpsciences.org
+
+ SCIENTIFIC ARTICLE
+
+
+
+A method for the reproduction of cello bow kinematics using a robotic
+arm and motion capture
+Montserrat Pàmies-Vilà*           , Alexander Mayer, Ewa Matusiak, and Vasileios Chatziioannou
+Department of Music Acoustics – Wiener Klangstil, mdw - University of Music and Performing Arts Vienna,
+Anton-von-Webern-Platz 1, 1030 Vienna, Austria
+
+            Received 25 March 2024, Accepted 10 July 2024
+
+            Abstract – Numerous experimental and theoretical methods have focused on the bow–string interaction in
+            bowed string instruments, including several artiﬁcial bowing setups. The current research aims to present an
+            experimental approach to reproduce bowing techniques using a robotic arm. First, optical motion capture is
+            used to track the 3D kinematics of the bow. The cello bow and corpus are equipped with reﬂective markers.
+            The cello is mounted on a playing platform. The recorded 3D trajectories of the bow markers are used to control
+            the motion of the robotic arm. This process requires converting the 3D data between the coordinate frames of
+            the two systems. This conversion is described in detail in this paper. To demonstrate the performance of the
+            proposed method, an experienced cellist was asked to play an adapted piece on the cello, which was then
+            repeated using the robotic arm. The robotic arm is capable of accurately reproducing the bow velocity, but even
+            minimal variations in position can compromise proper bow–string contact. To illustrate this, the study
+            compares two similar robotic situations and discusses the challenges of adapting the robot’s coordinates as a
+            function of a given playing parameter or the sound produced.
+
+            Keywords: Bowed-string instruments, Bowing machine, Motion capture, Musical robotics, Musical acoustics
+
+
+
+1 Introduction                                                              [17] and later Schoonderwaldt [7] made signiﬁcant contribu-
+                                                                            tions to the study of articulation styles using a bowing
+    The acoustics of bowed-string instruments have been                     machine to describe, among other aspects, how articulation
+extensively studied to examine the non-linear interaction                   relates to changes in the attack transients.
+between the bow and the string [1–3] as well as to quantify                     These devices often strived to achieve controlled playing
+the player’s actions on the instrument [4–8]. In pursuit of a               conditions, reducing the main playing parameters (bow
+better understanding of the underlying physics, numerous                    velocity, bow force and bow position) to a set of constant
+bowing devices have been developed to analyse the bow–                      values to analyse dependencies among them. Because of
+string interaction under controlled laboratory conditions                   the nature of controlled experimentation, these devices con-
+[1, 7, 9–13]. Since the ﬁrst bowing devices, like Raman’s                   sidered the bow trajectory on the string exclusively in a lin-
+in 1918 [9] and later Schelleng’s in 1973 [10], artiﬁcial bow-              ear motion, which was required in order to analyse
+ing approaches have aimed at analysing sound production                     playability in bowed-string instruments via Schelleng or
+and the properties of the so-called Helmholtz motion [1],                   Guettler diagrams [2, 12]. Although high precision has been
+originally only during steady-state [9–11] and more recently                achieved in previous bowing setups, a bow trajectory that
+also considering transient states [7, 12, 13]. Following Schel-             mimics the three-dimensional motion of a bow as played
+leng’s contributions [10], which identiﬁed a narrow set of                  by a musician was not considered.
+playing parameters where Helmholtz motion could possibly                        The current study proposes a method designed to record
+occur – as depicted in the Schelleng diagrams [14] –, many                  the bow kinematics of a real player using motion capture and
+subsequent studies have focused on how these control                        to replicate the bow motion with a robotic arm (Fig. 1). The
+parameters are used to create and sustain Helmholtz                         ultimate purpose of such a motion-capture-aided robotic
+motion [1, 2]. It was shown that the bow velocity plays a                   player is to enable a meticulous analysis of playing nuances,
+crucial role in sound production, and that changes in timbre                including articulation and realistic changes in bowing direc-
+mainly occur depending on the bow force and the bow–                        tion, while assuring a controlled laboratory environment.
+string contact position [2, 15, 16]. Askenfelt and Guettler                 For instance, compared to human players, a mechanical
+                                                                            playing setup would allow for a high number of exact repeti-
+*Corresponding author: pamies-vila@mdw.ac.at                                tions of the bow motion, whereby the mechanical player
+This is an Open Access article distributed under the terms of the Creative Commons Attribution License (https://creativecommons.org/licenses/by/4.0),
+              which permits unrestricted use, distribution, and reproduction in any medium, provided the original work is properly cited.
+2                                     M. Pàmies-Vilà et al.: Acta Acustica 2024, 8, 45
+
+                                                                   studies, both for violin [15, 23] and less often for cello
+                                                                   performances [24, 25], have shown the adequacy of using
+                                                                   motion capture to capture musician’s and instrument
+                                                                   movements. We build upon this existing technology
+                                                                   because of its availability in our and many research institu-
+                                                                   tions. However, the presented methodology could be
+                                                                   adapted to use another technology.
+                                                                       The objective of the current publication is to showcase
+                                                                   and evaluate the reproduction of bow kinematics with a
+                                                                   robotic arm. The motion of the bow is ﬁrst recorded in three
+                                                                   dimensions using optical motion capture technology. Subse-
+                                                                   quently, these captured data are processed and used to
+                                                                   instruct a robotic arm. The limitations of the proposed
+                                                                   method are discussed, as we acknowledge that the challeng-
+                                                                   ing problem of reproducing player-like bow strokes is not
+                                                                   yet completely solved. Note that the current approach relies
+                                                                   on the reproduction of the bow kinematics, i.e. its position
+                                                                   and velocity, but does not adapt or control for the bow
+                                                                   force. The bow force on the string is one of the key param-
+                                                                   eters deﬁning the timbre of the played sound [15, 26]. More-
+                                                                   over, the bow-string contact forces are also responsible for
+                                                                   the vibrotactile and kinesthetic feedback perceived by the
+                                                                   player on the bowing hand [27, 28] and used, together with
+Figure 1. Robotic arm situated on the playing platform with        the perceived sound, to meticulously introduce adjustments
+the cello secured on the supporting structure. The motion-         while playing. The current setup, however, is restricted to
+capture coordinate frame is given as {C}, which establishes the    the direct control of the robot action, without providing
+ground plane, and the robot coordinate frame {R} deﬁnes the        any feedback loop to re-adjust the robot’s trajectory while
+robot’s world frame.                                               playing, or accounting for a target bow force.
+                                                                       Following the previous conference paper, where we
+would not introduce any bias based on their opinion on the         presented an analysis of different dynamic levels (piano
+materials used (bow, instrument, etc.), or their level of com-     vs. forte) on all open strings of a cello [29], we now would
+fort or tiredness. For playability analysis, the robotic arm can   like to examine a recording of a more realistic playing
+also be set to play controlled, straight bow trajectories          situation using a cello piece adapted to be played on notes
+[16, 18], for which no motion-capture assistance is required.      G2, D3 and A3 using only open strings.
+    Mechanical setups to play musical instruments have                 The rest of the paper is structured as follows: The robotic
+been used for centuries, with examples ranging from piano          arm and motion capture technology used in this study are
+automata to sophisticated robotic performers. Within the           presented, and the methodology to convert bow-motion
+ﬁeld of musical robotics, a discipline found at the intersec-      data between these two systems is described in detail
+tion between musical creativity and robotics, there have           (Sect. 2). Section 3 suggests several metrics to evaluate the
+been many approaches to recreating a human performer               robot performance. Section 4 illustrates how a gentle change
+with a mechanical setup. The reader can refer to reference         in bow position in the direction of the robot-tool inﬂuences
+[19] for an overview. To this date, though, the robotic            the outcome. The manuscript concludes with a discussion
+approaches dealing with bowed strings, have not focused            of the capabilities and shortcomings of the presented
+on the analysis of musical instruments or their playing tech-      approach (Sect. 5).
+niques. They were rather seen as a robotics challenge on its
+own or as a tool for musical creativity. For example, the          2 Methodology
+violin playing robot by Shibuya et al. [20], the humanoid
+robot performer by Jordà et al. [21], or other robotic setups         This publication presents a methodology for converting
+taking part in artistic performances (such as “Empty               motion-captured bow kinematics to the coordinates neces-
+Vessels” by David Gardener and Greg Debicki, or the work           sary to instruct a robotic arm. The presented method can
+by composer Fredrik Gran on the cello). These approaches           be adapted for other types of motions that might be
+demonstrated the many possibilities of playing bowed-              required to play other string instruments, as well as for
+string instruments mechanically. We believe, though, that          other types of motion capture or robotic systems.
+there have been no previous investigations of the bow–             2.1 The robotic arm
+string interaction that include human-like bow trajectories.
+    Given the importance of bowing actions in sound pro-              The robotic arm chosen for the current purpose is the
+duction, motion capture technology [22] is well established        model UR5e by Universal Robots, which can safely operate
+as a method to record the 3D-trajectory of the bow, the            alongside humans in a shared workspace. It has a reach of
+instrument, and the player’s arms during playing. Many             850 mm and a 5 kg object-holding capacity (Fig. 1). With
+                                        M. Pàmies-Vilà et al.: Acta Acustica 2024, 8, 45                                         3
+
+its six independent joints, the robotic arm can position an
+object in space, assuring three degrees of freedom for posi-
+tion and three for orientation (total of 6 degrees of free-
+dom). We selected this type of robotic arm because of its
+reduced operation noise (below 65 dB, according to the
+technical speciﬁcations [30]), and a pose repeatability of
+±0.03 mm. To attach the bow to the robot, 3D-printed
+components are employed and screwed at the tool ﬂange,
+which is the last ﬂat surface at the mobile end of the robotic
+arm, where a certain tool can be added. Hereafter, we refer
+to the union of the last joint of the robot and the 3D-printed
+clamp as the tool1. The robot might be controlled directly
+via the angles of its joints or via the tool’s position and
+orientation in the robot’s Cartesian space, also called the
+robot frame. In the latter, an inverse kinematics algorithm
+calculates the corresponding joint angles [31]. The robot’s
+tool position, or TCP (tool-center-point), is therefore
+deﬁned by its 3D spatial coordinates relative to the robot
+base (Tx, Ty, Tz coordinates with respect to the robot’s
+origin), along with the tool inclination given in axis-angle         Figure 2. Indication of the motion-capture coordinate frame
+representation. The purpose of the presented methodology             {C}, the robot coordinate frame {R}, the bow coordinate frame
+is to convert the recorded motion capture data of the bow            {B} and the tool coordinate frame {T}. Location of the bow-
+kinematics to these six coordinates of the tool (three for           markers F, T, A, B, C (see Fig. 3) and cello-markers S, N.
+position, three for orientation). In robotics, the establish-
+ment of three positions and three rotations is called the pose       the frog F, and three in between them, labelled as A, B,
+of the tool [31]. A given pose is always relative to the             and C, as seen in Figures 2 and 3. A triangular 3D-printed
+coordinate frame of the robot, centred at its origin. In             mount is used to clamp these three markers on the bow-
+Section 2.7 further details about the control and communi-           stick, right in front of the winding. The distance between
+cation protocols with the robot are provided.                        markers C and B is 6 cm; between markers C and A, 5
+                                                                     cm, and between markers F and C, 17 cm.
+2.2 Optical motion capture system
+
+    The current approach uses optical motion capture with            2.3 Coordinate frames
+passive reﬂective markers and infrared cameras. The setup
+                                                                         Both the motion capture and the robotic systems func-
+consists of 12 infrared cameras (OptiTrack Prime 13), dis-
+                                                                     tion based on a Cartesian coordinate system or frame,
+tributed on a metallic grid suspended from the ceiling.
+                                                                     where three orthogonal axes are chosen to form a right-
+Given that the cello consistently faces forward, a conﬁgura-
+                                                                     handed coordinate frame. Motion capture data are recorded
+tion with fewer cameras could also be sufﬁcient. Typically,
+                                                                     as the distance of all markers to the three axes (X, Y, and
+these systems involve the placement of a minimum of six
+                                                                     Z) of a user-deﬁned camera coordinate frame {C}, i.e., the
+cameras strategically around the capture space [32]. The
+                                                                     origin of the motion capture space. This camera coordinate
+Prime 13 cameras emit infrared light, which is reﬂected
+                                                                     frame {C} is situated on the surface of the platform, in
+from the markers positioned on the bow, cello, playing
+                                                                     front of the instrument and next to the robot (marked with
+platform, and, if needed, speciﬁc body parts of the player.
+                                                                     {C} in Figs. 1 and 2). The motion capture system and soft-
+The cameras, connected via LAN with a PC, capture the
+                                                                     ware require a one-time recording of a normalised L-shape
+reﬂected infrared light. A commercially available software
+                                                                     (3 reﬂective markers at 90°), which deﬁnes the direction
+(Motive by OptiTrack) calculates the position of each mar-
+                                                                     of the X and Z axes and, therefore, the ground ﬂoor of
+ker in three dimensions in space at a rate of 240 frames per
+                                                                     the recording space. In the present setup, the three markers
+second (fps), with a typical precision of around ±0.3 mm.
+                                                                     forming the L-shape are screwed on the playing platform.
+Note that the error introduced due to imprecision of the
+                                                                     To avoid introducing errors because of the positioning of
+camera recordings is about one order of magnitude larger
+                                                                     the origin markers, the position of the L-shape is recorded
+than the error in controlling the robotic arm (±0.03 mm).
+                                                                     at all times, and it is subsequently subtracted from the
+This might introduce inaccuracies in the reproduction of
+                                                                     motion capture data collected.
+the recorded geometrical data of the bow motion. A mini-
+                                                                         The robot coordinate frame, denoted as {R}, serves as
+mum of three reﬂective markers are necessary on the
+                                                                     the world frame for the robot, establishing the reference ori-
+bow to calculate its position and orientation in space. For
+                                                                     gin for all data that are input or output from the robot.
+better visualisation, in the current setup, ﬁve reﬂective
+                                                                     This frame represents the relation of the robot coordinate
+markers are afﬁxed to the bow: one at the tip T, one at
+                                                                     system to the camera frame {R} and is ultimately deﬁned
+1
+  Other nomenclatures, such as end effector, holding joint,          by the positioning of the robot arm on the platform. We
+object, last link, or wrist, are omitted on purpose for simplicity   decided to maintain the direction of the x-axis, so that
+4                                       M. Pàmies-Vilà et al.: Acta Acustica 2024, 8, 45
+
+                                                                     the Z-axis and a translation by dy, and the z-axis is a trans-
+                                                                     lation of Y-axis by distance dz. To correct any misalignment
+                                                                     of the horizontal axes of the robot (x, y) that might occur
+                                                                     when mounting the robot on the playing platform, we intro-
+                                                                     duce an additional rotation around the z-axis by an angle b
+                                                                     (Fig. 2). In other words, in the current conﬁguration, the
+                                                                     robot base is placed on the playing platform (z-axis points
+                                                                     upwards), but it might not be exactly parallel to the camera
+                                                                     frame. To put it brieﬂy, the transformations of any point
+                                                                     P = [PX PY PZ]| with respect to the camera frame {C} to
+                                                                     the same point p = [px py pz]|with respect to the robot
+                                                                     frame {R} are ﬁrst a translation by dx, dy and dz, then a
+                                                                     change of orientation of the axis (rotation by an angle of
+                                                                     p/2 radians about the X-axis), and a further rotation by
+                                                                     an angle b about the z-axis. This can be mathematically
+                                                                     written as:
+                                                                     2    3 2                       3 2            3 2             3
+                                                                       px        cos b    sin b   0     1 0     0        P X  dx
+                                                                     6 7 6                          7 6            7 6             7
+Figure 3. Location of the bow coordinate frame {B} and the           4 py 5 ¼ 4  sin b   cos b   05  40 0     1 5  4 P Y  d y 5
+tool coordinate frame {T}, with an indication of the distances tx,     pz          0        0     1     0 1     0        P Z  dz
+tz and the angle u that allows to align the two coordinate frames.                                                              ð1Þ
+
+up-bow and down-bow motions correspond to growing or                 After this conversion, one can think of the converted
+decreasing values in the x-axis in both camera and robot             recorded data as if the L-shape deﬁning the origin of the
+data. The same frame {R} is used in Section 4 as the                 motion capture data had been placed at the origin of the
+reference origin of the presented data.                              robot coordinate system.
+
+2.4 Post-processing of motion capture data                           2.6 Conversion from the bow markers to the
+                                                                         tool-centre-point
+    After the recordings, the motion capture software
+(Motive by OptiTrack) is used to assign every marker with                The second part of the conversion algorithm considers
+a label, and to interpolate possible occlusions. Occlusions          the position of the bow markers with regard to the position
+appear if a marker is hidden from the camera view for                of the robot tool-center-point or TCP. The TCP is a coor-
+several frames, introducing a gap in the recorded data.              dinate system given with respect to the robot coordinate
+Because the markers on the bow (markers F, A, B, C,                  frame, which is used to instruct the robot to move. It is
+and T) are facing the cameras all the time, no occlusions            by default located at the last ﬂat surface of the robot
+are found for these markers. The markers on the instrument           arm, called the tool ﬂange, as marked with {T} in Figures 2
+are usually also not covered, but in cases where this might          and 3. For simplicity, the current approach also keeps the
+happen, the data for the cello-markers are linearly interpo-         TCP in its default setting, but one could relocate it some-
+lated. Note that the cello is rigidly mounted to the playing         where else on the tool (via the robot software). Since the
+platform for all tests, so the cello markers show nearly con-        proposed method is purely geometrical, the bow and the
+stant values. All markers of interest (bow and cello markers,        last joint of the robotic arm need to be rigidly clamped. This
+playing-platform markers, and clapperboard markers) are              is achieved by combining two custom-made 3D printed
+exported without any applied ﬁltering, and are used in               parts to which, on one side, the bow is attached (orange
+the next steps of the algorithm.                                     part in Fig. 3) and, on the other side, the 3D-printed clamp
+                                                                     is screwed to the tool ﬂange (white part in Fig. 3). In order
+2.5 Change of basis and conversion of recorded data                  to make the robot move according to the recording, the
+                                                                     recorded bow data (bow coordinate frame {B}) have to
+    After exporting the motion capture data, all 3D data are         be translated to the TCP (tool coordinate frame {T}).
+ﬁrst converted from the camera coordinate frame {C} to the           For that, we must assume that the bow is a rigid body.
+robot coordinate frame {R} via a change of basis. The                Attaching the considered bow markers as close as possible
+change of basis is given by three translations and a rotation        to the robot-bow junction reduces the error introduced by
+matrix, and it is applied to all recorded data. The three            this assumption (the marker at the tip of the bow is there-
+translations are the positions of the robot coordinate frame         fore not used in the conversion, but later for the analysis).
+{R} given in the camera frame {C} and the rotations are              The next steps describe how to implement the conver-
+the orientations of the axes of {R} (x, y, z) with respect to        sion from the bow markers to the TCP and adapt the
+{C} (X, Y, Z). The x-axis is therefore a result of a translation     motion capture data to be ready for communication with
+of X-axis by distance dx; the y-axis is a rotation by 180° of        the robot.
+                                        M. Pàmies-Vilà et al.: Acta Acustica 2024, 8, 45                                          5
+
+2.6.1 Determine the bow coordinate frame                           Table 1. Values for the conversion parameters as used in this
+                                                                   study.
+    To obtain the bow location in the 3D space, one needs
+its position and its orientation. The position of an object        Sampling frequency                      Motion capture: 240 fps
+is given by the position of one point of the object. The                                                   Robot control: 250 Hz
+                                                                                                           Audio recording: 44100 Hz
+orientation can be represented using a rotation matrix B,
+which is constructed using the unit vectors deﬁning its            Robot center respect                    dx = 576.62 mm
+                                                                   to camera origin                        dy = 163.00 mm
+coordinate frame {B} as columns. To determine the unit
+                                                                                                           dz = 25.84 mm
+vectors ux, uy and uz, the bow markers are employed.                                                       b = –0.5157°
+    The origin of the bow coordinate frame {B} is placed on
+the marker C (see Figs. 2 and 3). Several sets of bow mark-        Bow marker C to TCP alignment           tx = 115.45 mm
+                                                                                                           ty =0
+ers have been tested to calculate the unit vectors. The log-
+                                                                                                           tz = 16 mm (case A)
+ical use of markers ABC to deﬁne the unit vectors as the                                                   tz = 15 mm (case B)
+normalised version of vectors CB and CA and their cross-                                                   u = 1°
+product led to increased errors. This is because the stick
+of the bow might slightly turn along its axis, thus forcing
+                                                                   (centred at the marker C = [Cx Cy Cz]|) to {T} (centred
+marker A to rotate as well. This gentle rotation of the stick
+                                                                   at the origin of the TCP T = [Tx Ty Tz]|). Since the orienta-
+is due to the bow adjuster, a mechanism of the bow to
+                                                                   tion of the bow has already been calculated as the orienta-
+tighten the bow hair through a screw-system at the frog.
+                                                                   tion of the TCP in the previous step (with the z-axis
+    We therefore use the frog F-marker instead of the
+                                                                   pointing to the bow hair), and the bow and the tool are
+A-marker. Note that the vectors CB and FC are linearly
+                                                                   rigidly clamped, the change of basis implies just a transla-
+independent since C and B are above the bow stick and F
+                                                                   tion from C to T, given by:
+is screwed on the bow adjuster (Fig. 3). Using markers F,                            2 3 2 3              2 3
+C and B, one can calculate the rotation matrix of the                                  Tx        Cx         tx
+bow B which has unit vectors ux, uy, uz as columns, as:                              6 7 6 7              6 7
+                                                                                     4 T y 5 ¼ 4 C y 5  B4 t y 5            ð3Þ
+                  B ¼ ½ ux   uy    uz ; with                                           Tz       Cz         tz
+             CB                                             ð2Þ
+     ux ¼        ; uy ¼ ux  uFC    and     uz ¼ ux  uy           where tx, ty and tz are the geometrical distances between the
+            jCBj
+                                                                   C-marker and the tool-center-point T (Fig. 3). Table 1
+where uFC ¼ FC=jFC j is an auxiliary unit vector used to           shows the geometrical parameters used for the conversion
+calculate uy; ux is the longitudinal unit vector of the bow;       in the present study. The values T = [Tx Ty Tz]| are the
+uy is the transversal unit vector, and uz is perpendicular         ﬁrst three inputs that deﬁne the position of the robot tool.
+to both and pointing to the hair of the bow (Fig. 2).              The next three are its orientation, given in axis-angle
+    At this step, one might want to consider a certain rota-       representation.
+tion u along the transverse axis uy that would allow intro-
+ducing a given angle between the longitudinal axis of the          2.6.3 The axis-angle representation
+bow and the corresponding axis of the tool, as showcased
+                                                                       The orientation in 3D of the robot tool is given by three
+in Figure 3. To do that, uy is maintained, ux is rotated in
+                                                                   values corresponding to its axis-angle representation. The
+its 3D coordinates by an angle u and uz is recalculated as
+                                                                   rotation matrix of the bow B (Eq. (2)) is used to compute
+the cross product of uy and the new ux. In the current algo-
+                                                                   the axis-angle representation, which is required by the robot
+rithm, we allow a rotation of u = 1°. This value can be
+                                                                   software to read out the orientation of the object, and it is
+adjusted if another bow-tool clamp system is used.
+                                                                   expressed as [rx, ry, rz]| = ha. Here, h represents the angle
+2.6.2 Alignment of the bow and tool coordinate frames              (in radians) and a the vector characterising the orientation
+                                                                   of the bow, as:
+    For robotic arms, it is common to use a coordinate frame                                       TrðBÞ  1
+called tool-center-point (TCP) that is located either at the                           h ¼ arccos                            ð4Þ
+                                                                                                       2
+ﬂat surface of the last robot joint (tool ﬂange) or at a chosen
+point related to the tool in use [31]. By convention, this coor-                                    2           3
+                                                                                                      b32  b23
+dinate frame is set so that its z-axis points out of the tool                                1      6           7
+ﬂange. The z-axis is sometimes called the approach vector,                           a¼             4 b13  b31 5                ð5Þ
+                                                                                          2 sin h
+since it moves the tool closer or further away from the object                                          b21  b12
+it interacts with. In the current approach, the z-axis is
+crucial to approaching the string with sufﬁcient force to sat-     where Tr(B) is the trace of the rotation matrix B and bij
+isfactorily bow on it. The next step involves converting the       are the cell values at the ith row and jth column of the rota-
+data describing the motion of the bow coordinate frame             tion matrix. As the rotation matrix is formed with the unit
+{B} to that of the tool coordinate frame, denoted as {T}           vectors, the values bij are obtained in the previous step. We
+(Figs. 2 and 3). The alignment between these two coordinate        remark that the columns of the matrix must be of norm 1.
+frames is achieved through a change of basis from {B}              The above formula is valid only when the matrix B is not
+6                                                M. Pàmies-Vilà et al.: Acta Acustica 2024, 8, 45
+
+
+
+
+Figure 4. Schematic of the process to convert data from the motion-captured 3D position of three markers on an object to the robot
+coordinates deﬁning its pose.
+
+symmetric, that is, when the rotation angle is not 0 nor ±p.                        reading a long list of poses (such as in the present case),
+Such singularities can be detected by checking if the trace                         the robot should be controlled externally, so that it can
+Tr(B) is equal to 1 (case h = ±p) or 3 (case h = 0). If                             be given one pose at a time. Using the Real-Time Data
+the trace equals 3, B is an identity matrix, and any vector                         Exchange (RTDE) method [34], both the TCP pose (Carte-
+can be chosen for a. In the case of a trace equal to 1, known                       sian space) or the joint angles of the robot can be driven
+as Gimbal lock, a different approach to ﬁnding the vector a                         externally. In the present approach, the PC-software com-
+is required (the reader can refer to a general robotics refer-                      municating with the robot is written in NI – LabVIEW
+ence for more details [31]).                                                        [35]. A graphical user interface (GUI) is used to visualise
+Finally, at each time instance, the six robot coordinates are                       and control the data transfer and the recordings. As data
+determined, i.e. the pose of the tool, comprising three posi-                       transfer to the robot happens at a rate of 250 Hz, the robot
+tions and three angles, denoted as [Tx, Ty, Tz, rx, ry, rz]. The                    coordinates are updated every 0.004 s. The receiving robot
+conversion process is schematised in Figure 4. To achieve                           program performs the inverse kinematics conversion in real
+the motion of the bow with the robotic system, a sequence                           time on the internal computer of the robotic arm (from the
+of positions and orientations is continuously transferred to                        positions and angles of the TCP to the angles of the robot
+the robotic arm at a rate of 250 Hz.                                                joints).
+2.7 Data transfer between systems
+    The original motion capture data are exported in a CSV
+                                                                                    3 Evaluation
+ﬁle containing the X, Y, Z positions of the required markers                            For the present publication, several recordings were
+in the {C} frame. These data were used without any ﬁlter-                           made so that a comparison could be made between the
+ing for the purpose of data transfer to the robot. After the                        human performance (with a professional cellist) and two
+aforementioned geometrical conversion (implemented in                               performances by the robotic arm (instructed with the
+MATLAB, by MathWorks), the frame rate is interpolated                               recording by the human player). We introduce several met-
+from 240 Hz (motion-capture rate) to 250 Hz (robot data-                            rics to evaluate the errors in the robot performances.
+exchange rate). A series of tool coordinates at every time-
+step n are exported to a txt ﬁle as ½T nx ; T ny ; T nz ; rnx ; rny ; rnz . This   3.1 Experimental procedure
+ﬁle is then read line-by-line in LabVIEW (by National
+Instruments) to transfer the data to the robot.                                         A cello of size 4/4 (adult size) was attached to a stable
+    The robotic arm might be controlled via a user-friendly                         support structure on a playing platform, to remain immo-
+environment that allows for a set of custom-made instruc-                           bile during the tests (see Fig. 1). The position and inclina-
+tions [16, 33]. However, if the requested motion requires                           tion of the cello were predetermined based on a study of six
+                                     M. Pàmies-Vilà et al.: Acta Acustica 2024, 8, 45                                          7
+
+cellists, taking into account their height, body proportions    The parameter rcontact is then calculated as the minimum
+and comfort [36]. The recordings consisted of synchronised      geometrical distance between these two lines in the 3D
+measurements of motion capture and sound using a micro-         space. In an ideal scenario, rcontact should exhibit similar
+phone at 45 cm in front of the instrument (ROGA Instru-         behaviour for both human and robot performances. Any
+ments RG50 – also afﬁxed to the playing platform), as           deviations in rcontact are an indication of the inaccuracies
+well as a piezoelectric sensor on the bridge, with a sampling   that might arise at the bow–string contact. Therefore, it
+rate of 44100 Hz. Supplementary video images were taken         serves as a measure to evaluate the robot’s performance,
+to facilitate data analysis.                                    speciﬁcally at the contact point of the bow on the string.
+     First, an experienced cellist was invited to perform       We showed that the accuracy of rcontact seemed to vary
+various open-string exercises on the prepared instrument        depending on the string being played, with the best results
+and bow (i.e. only using the bow, without ﬁngering any          for string D3 [29]. Yet, a systematic analysis that compares
+notes with the left hand), as well as a real piece adapted      the motion capture data to the resulting sound was missing.
+to be played on three open strings (cello part of “Spring”          For the present study, two more parameters related to
+1st movement of The Four Seasons by Antonio Vivaldi).           the produced sound are introduced. The ﬁrst parameter
+After data conversion (see Sect. 2), the robot was instructed   compares the root-mean-square (RMS) value per note
+to replicate the bow motion. Using the same recording           among the three playing situations (human, robot case A,
+setup as for the human player, the 3D trajectories of the       robot case B), calculated as
+bow were again recorded for comparison (motion capture,                                       vﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃ
+                                                                                              u
+audio and video data). The data collection using the                                          u1 N    X   n
+
+robotic-arm took place two weeks after the session with                              RMSn ¼ t                 s2         ð6Þ
+                                                                                                N n i¼1 i
+the human player. The protocol was approved by the
+Ethics Committee of the mdw – University of Music and
+Performing Arts Vienna.                                         where si (i = 1, 2, . . ., Nn) are the excerpts of the sound ﬁles
+     This paper showcases two very similar situations of        with a length of Nn per note n. The RMS-values are then
+bow-motion replication with the robotic arm. They differ        subtracted as ERMS = |RMShuman – RMSrobot| to obtain
+only by 1 mm in the tz value (Fig. 3). Changes in parameter     the absolute error per note. The mean absolute errors are
+tz allow adapting the whole data set in the direction of the    calculated and classiﬁed according to the played string.
+longitudinal axis of the tool (z). Since the plane of the bow   The error ERMS indicates whether the sound level produced
+hair approximately faces the instrument during playing (so      in each of the two robot cases is comparable to that of the
+that the bow hair touches the strings), a decrease in tz,       human playing situation. It can then be compared to the
+moves all recorded data in the direction of the z-axis of       errors appearing in the parameter rcontact, calculated as
+the tool, and thus brings the bow closer to the instrument.     Er = |rhuman – rrobot| at each note, and averaged and clas-
+In case A, the parameter tz equals 16 mm, and thus the bow      siﬁed at each string (see Tab. 2).
+is slightly further away from the instrument. And in case B,        A second sound-related measure is introduced in order
+the parameter tz equals 15 mm, and the bow is closer to the     to consider not only the sound level but also the spectrum
+instrument. After observing some inaccuracy in the bow–         of the produced sounds. This measure aims to indicate dif-
+string contact in case A, case B is expected to provide a       ferences in the amplitude of the spectral harmonics. Figure 5
+more stable contact.                                            shows the similarity between the human and robot playing,
+                                                                both in the waveform and on the frequency peaks (shown
+3.2 Data processing and analysis                                for string A3).
+                                                                    To further explore this comparison for the whole record-
+    The motion capture data shown in this paper regard the      ing and quantify it, three parameters inspired by the tris-
+motion of selected markers to compare human playing with        timulus timbre model [37] are calculated. They aim to
+the two robot-playing conditions (cases A and B). The data      compare separately the errors in amplitude of the funda-
+were low-pass ﬁltered using a Butterworth 3rd order ﬁlter at    mental frequency (Ea,1), the average of the second, third,
+12 Hz to reduce measurement noise. The markers’ positions       and fourth harmonics (Ea,2), and the averaged amplitude
+x, y, z are given with respect to the robot coordinate frame    of the higher harmonics (Ea,3), as indicated with vertical
+{R}. This implies that when the player bows “to their right”    lines in Figure 5. To do that, the errors in amplitude are
+(down bow), x increases, and when the player bows “to their     ﬁrst calculated for all considered harmonics as
+left” (up bow), x decreases. The z coordinate is vertical       eah ¼ jah;human  ah;robot j, where ah is the amplitude of the
+(positive upwards), and the y coordinate grows to the front     hth harmonic, for h = 1, 2, 3, . . ., H. Then the three param-
+and diminishes to the back with respect to the instrument.      eters are computed as:
+    In the previous conference publication [29], we com-
+pared human vs. robot performances by ﬁrst considering                              Ea;1 ¼ ea1
+only one marker on the bow (i.e. the frog marker), and later                               1 X
+                                                                                    Ea;2 ¼          ea
+considering two reﬂective markers on the bow and two on                                    3 i¼2;3;4 i                       ð7Þ
+the cello. On the bow, the frog and the tip markers (F, T
+in Fig. 2) create a line FT ; on the cello, the bridge and                                   1 X  H
+                                                                                    Ea;3 ¼          ea :
+the nut markers (S and N in Fig. 2) create the line SN.                                    H  4 i¼5 i
+8                                     M. Pàmies-Vilà et al.: Acta Acustica 2024, 8, 45
+
+                                                                  robot (robot case A and B) mimics the human playing.
+                                                                  Even though one would expect that the note-onsets (verti-
+                                                                  cal lines) happen at the bow change (changes from down-
+                                                                  bow – x increases, to up-bow – x decreases), as it was
+                                                                  observed in the previous publication ([29], Fig. 4), it
+                                                                  appears not to be the case in the present recording. Here,
+                                                                  due to the presence of playing nuances (e.g. accents or notes
+                                                                  that are shortened due to a certain articulation style), the
+                                                                  note onsets do not always directly coincide with the bow
+                                                                  change. As it was observed in Ref. [29], the biggest errors
+                                                                  in the positioning of the bow after the conversion from
+                                                                  motion capture data to robotic coordinates appear at the
+                                                                  bow change. In the following lines we give the errors of
+                                                                  the recorded kinematics of marker F as Ex = xF,human 
+                                                                  xF,robot for coordinate x as well as for coordinates y, z and
+                                                                  their ﬁrst derivatives.
+                                                                      Considering the whole recording, the mean errors
+Figure 5. Waveform (top) and harmonic peaks (bottom)              for case A and case B, respectively, report: mean (Ex) =
+comparing human and robotic playing at string A3. The             {2.3, 1.9} mm, mean (Ey) = {0.1, 0.5} mm, mean (Ez) =
+spectrum frequency-axis is given as normalised by the funda-      {2.9, 2.1} mm. If the robot data showed a consistent
+mental frequency (so that the peaks align with each harmonic      offset in any of the axes, one could consider adapting the
+number). The spectrum of the human-played tone is plotted in      whole setup by manually ﬁne-tuning the distances dx, dy
+gray for better visualisation. The vertical lines separate the    and dz, respectively. These distances are an approximation
+harmonic peaks used for the errors Ea,1, Ea,2 and Ea,3.           of the distance between the centre of the camera coordinate
+                                                                  frame and the centre of the robot coordinate frame. An
+In the current study, the number of harmonics considered is       analysis of the mean error of one marker on each axis can
+H = 30. Note that the ﬁrst parameter directly depicts the         already assist into the evaluation of the setup, for example
+error in the amplitude of the fundamental frequency. To           at the beginning of the recording session, to check that the
+calculate the spectra of the signals, time-windows of 0.4 s       outcome conversion-methodology is as expected. Such a
+with 0.2 s overlap are used, which are windowed with a            procedure was performed at the beginning of the recording
+Hamming function, and their fast-Fourier transformation           session, distances dx, dy and dz were then ﬁxed (values given
+(FFT) is computed. After that, the mean absolute errors           in Table 1). After that, only a change in the bow-tool dis-
+are calculated at each of the three strings for comparison        tance tz was tested for the experiment (cases A and B).
+(Table 3).                                                            Errors in the position along the x-axis (main bowing
+                                                                  axis) are less problematic than errors in the z-axis
+                                                                  (horizontal – approaching the instrument from the front)
+4 Results                                                         and the y-axis (vertical – approaching the instrument from
+                                                                  above): inaccuracies in y and z axes can result in a loose
+    We present in this paper the comparison of three play-        bow–string contact, while inaccuracies in the x-axis mainly
+ing situations: a real cellist playing a piece of music adapted   translate the bow along its longitudinal axis. Although the
+for 3 open strings, and its robotic reproduction with the pro-    reported mean errors are fairly small, maximum errors can
+posed method in two cases (A, B). Cases A and B differ by a       reach values of around 1 cm at each axis. The maximum
+change of 1 mm in the direction of the robot tool, i.e., in       errors are reported for the showcased passage (Fig. 6), for
+case B the bow is slightly closer to the instrument than in       case A and case B, respectively, as max (Ex = {9.9, 9.6})
+case A. If there is bow–string contact in both cases, the         mm, max (Ey) = {4.7, 5.4} mm, max (Ez) = {2.8, 3.8}
+change from A to B results in increased bow force on the          mm. And for the whole recording as max (Ez) = {17.3,
+string. If there is no contact in case A, then a change in tz     16.7} mm, max (Ey) = {7.9, 8.4} mm, max (Ez) =
+(towards the instrument) may lead to bow–string contact           {7.1, 8.0} mm. These maximum errors are found at the
+in case B. For data regarding all four open strings of the        instances where extreme direction changes take place. Since
+cello in an exercise concerning dynamic changes (from soft        the robotic arm is much more massive than the person’s
+to loud dynamic range), the reader can refer to the proceed-      arm, the robotic arm reduces its velocity around these fast
+ings of Forum Acusticum 2023 [29].                                changes, acting as a low-pass ﬁlter effect on the recorded
+                                                                  motion capture data. This effect becomes more apparent
+4.1 Position and velocity                                         when regarding the velocity curves (right-side of Fig. 6).
+                                                                  Note that the reported mean errors and maximum errors
+    Figure 6 shows an example of the kinematic data gath-         also depend on the precision of the motion capture camera
+ered in the tests. On the left-side, the position in three axes   setup used to compare the performances.
+of the frog marker F (xF, yF, zF - given according to the             The mean errors regarding velocity (right-side of Fig. 6)
+robot world frame {R}) demonstrates how similarly the             are a good indicator of the precision of the robotic system:
+                                      M. Pàmies-Vilà et al.: Acta Acustica 2024, 8, 45                                                           9
+
+mean ðEvx Þ ¼ f0:84; 0:86g mm/s, mean ðEvy Þ ¼ f0:20; 0:21g        Table 2. Absolute mean errors Er and ERMS comparing the
+mm/s, mean ðEvz Þ ¼ f0:19; 0:17g mm/s, for case A and            human and robot performances (robot case A and robot case B)
+B, respectively. This means that although there might be           as a function of the played cello open string (A3, D3, G2, from
+an offset in all three axes in terms of position (resulting from   high to low). Column # indicates on how many notes case B
+                                                                   presented a smaller error than case A.
+geometry imprecisions), the velocities present no offsets.
+Since most of the control of dynamic level in bowed-string                               Er [mm]                           ERMS [norm.]
+instruments happens because of the velocity of the bow
+                                                                                      Case              #                 Case              #
+[7], it is crucial that the system achieves the required veloc-
+ity. Moreover, the almost identical reproduction of the                           A          B                       A           B
+velocity curves between A and B (Fig. 6) shows the high            String A3    1.80      0.96         25/26       0.068       0.044       24/26
+repeatability of the robotic setup. Although the peaks of          String D3    1.98      0.37         30/36       0.019       0.012       32/36
+velocity of the recorded motion are below the limits for typ-      String G2    0.37      0.58         4/10        0.039       0.028       7/10
+ical TCP speed speciﬁed by the robot’s manufacturer (1000
+mm/s [30]), the tested motions are already reaching the lim-
+its of the setup. The difﬁculties of the current requirements      Table 3. Absolute mean errors in the harmonic-amplitude-
+are the fast change of direction of the bow (reduce velocity       parameters Ea,i comparing the human and robot performances
+                                                                   (robot case A and robot case B) as a function of the played cello
+and suddenly increase velocity in the opposite direction),
+                                                                   open string (A3, D3, G2, from high to low).
+and the short peak in velocity happening in between bow
+changes. Maximum errors in velocity for this passage report:                          Ea,1 [dB]              Ea,2 [dB]               Ea,3 [dB]
+max ðEvx Þ ¼ f95:1; 94:6:1g mm/s, max ðEvy ¼                                          Case                      Case                   Case
+f104:9; 106:3Þg mm/s, max ðEvz Þ ¼ f140:7; 141:0g
+mm/s. Notice that less expressive music (as the exercises                          A             B          A            B           A          B
+presented in [29]) would show a velocity plot that resem-          String A3      7.5            5.7        6.4          5.3     7.8            8.3
+bles a squared wave. Here instead, it resembles a sinus            String D3      7.1            4.7        7.6          5.8     9.0            7.6
+curve, with higher velocity peaks. For comparison, the             String G2      2.5            1.8        5.9          4.8     6.9            6.8
+passage shown in Figure 6 shows values of vx that double
+those found for the exercises in reference ([29], Fig. 4). This
+suggests that expressive music challenges the requested            throughout the recorded signals using the selected parame-
+reproduction task even more than controlled bowing                 ters follows.
+exercises.                                                             Table 2 summarises the average per played string (A3,
+                                                                   D3, G2) of the two parameters Er and ERMS. It shows
+4.2 Closer contact: better sound?                                  how much error the robot performances (case A and
+                                                                   case B) have with respect to the human performance at
+    Since the analysis was so far centred on one marker (frog      each string, and it also indicates on how many notes the
+marker), one would need to consider more markers if a com-         case B resulted in a smaller error than case A (marked with
+parison with the produced sound is needed. Therefore, the          #). The notes are repeated 26, 36 and 10 times at strings
+parameter rcontact is proposed as a measure of the distance        A3, D3, G2, respectively. From Table 2, it becomes clear
+between the 3D-lines formed by two extreme bow markers             that case B performs signiﬁcantly better than case A for
+(frog F and tip T markers) and two extreme string markers          strings A3 and D3 (highest and middle-high string of the
+(bridge S and nut N markers in Fig. 2). Figure 7 shows the         cello), but not for string G2 (middle-low string of the cello).
+same passage of the recorded piece as in Figure 6, compar-         This observation is in agreement with reference [29].
+ing the sound (waveforms and RMS-envelopes) and the                    The errors Ea,1, Ea,2, Ea,3 that express the three tristim-
+parameter rcontact.                                                ulus-inspired parameters regarding the amplitude of the
+    Although it was shown in Figure 6 that differences             spectral harmonics are calculated according to equation (7)
+between case A and B are difﬁcult to analyse out of the            for robot case A and case B with respect to the human
+raw motion capture data (left-side of Fig. 6), parameter           performance. Table 3 shows the three errors classiﬁed
+rcontact ampliﬁes these differences and facilitates the analy-     according to the string played. In this case, for the funda-
+sis. At the bottom of Figure 7, parameter rcontact shows           mental frequency, Ea,1 always shows an improvement of
+that neither case A nor case B exactly follow the human            case B compared to case A. The same applies to the middle
+performance, yet case B appears to be closer to the desired        frequencies: Ea,2 shows a smaller error in B than in A. For
+result in rcontact than case A. Observations of an offset in       the high frequencies represented with Ea,3, a positive obser-
+the parameter rcontact could therefore be used to adjust           vation can only be made for string D3 but not for strings A3
+the system – as it is done between cases A and B – by apply-       and G2. Again, string D3 is the one that shows the greatest
+ing a slight modiﬁcation in the parameter tz when convert-         advantage of a change from case A to case B. The differ-
+ing the data. Similarly, differences in RMS-envelope               ences observed in the high frequencies are also dependent
+(middle plot), are in this example wider for case A than case      on the pitch played, since the parameter Ea,3 considers
+B. RMS-envelopes in this plot are computed using a run-            the harmonic peaks starting at the 5th peak, and these
+ning RMS envelope with a window of 4000 samples (about             frequencies are the highest for string A3; that could explain
+10 periods of the lowest note). An analysis of the errors          the increased errors at the highest string.
+10                                     M. Pàmies-Vilà et al.: Acta Acustica 2024, 8, 45
+
+
+
+
+Figure 6. Example of the raw motion capture data for all axes on the frog marker (xF, yF, zF) and their ﬁrst derivatives (vx, vy, vz).
+The plot top is synchronised with the sound waveform of this passage for comparison (arbitrary units). Vertical lines indicate the note
+onsets.
+
+
+
+
+Figure 7. Passage of the recorded data showing the sound envelopes (waveform on the top and RMS-envelope in the middle) and the
+parameter rcontact, comparing human and robot cases A and B. Vertical lines correspond to the note onsets (played notes A3, D3, G2
+indicated at the top).
+                                      M. Pàmies-Vilà et al.: Acta Acustica 2024, 8, 45                                        11
+
+Table 4. Improvement rate given as the percentage of the           achieved similar sound-level values to the human perfor-
+occurrences where case B shows a smaller error than case A in      mance, but it also resulted in a closer sound spectrum.
+the recorded data (if improvement rate > 50%). Errors in the
+parameter rcontact, the running RMS-envelope (as in Fig. 7) and
+the harmonic-amplitude errors Ea,i comparing the human and
+robot performances (robot case A and robot case B). First          5 Discussion
+without string-classiﬁcation (global) and then classiﬁed at each
+string.                                                                 This study presents an approach to replicate the bow
+                                                                   movements on bowed-string instruments using a robotic
+                            Improvement rate                       arm, and it describes the methodology to use motion cap-
+             Er        ERMS         Ea,1       Ea,2        Ea,3    ture data to obtain the bow motion. Through the integra-
+                                                                   tion of optical motion capture technology and the control
+Global      73.6%      67.3%       64.8%      75.2%      64.8%
+                                                                   of the robotic arm, we have demonstrated the feasibility
+A3          87.3%      74.4%       48.8%      71.6%      36.4%
+D3          73.5%      66.1%       72.6%      78.4%      79.4%     of reproducing the bow kinematics in a controlled setting.
+G2          55.6%      55.0%       62.5%      65.6%      56.2%     The proposed methodology does not use any active regula-
+                                                                   tion, instead, it uses a set of coordinates that depict the
+                                                                   motion of the bow to control the motion of the robotic
+                                                                   arm. Thanks to this direct control of the robotic arm, the
+    Tables 2 and 3 show the mean errors per string played,         motion of the bow as moved by the robot is fairly close to
+after averaging the values obtained at each played note rep-       that of the cello player. Yet, given the complexity of the
+etition. If the whole recording is now considered, without         bow–string interaction, minimal changes in the bow motion
+separating the ﬁles according to the note played, one could        and force on the string are known to result in great changes
+calculate the errors of the selected parameters at a more          in the sound production. This poses an extra challenge
+global scale. This is reported at the top of Table 4, which        when aiming at reproducing playing nuances such as
+regards whether case B is an improvement with respect to           articulation techniques and precise dynamic-level changes.
+case A (improvement rate > 50%) or not (improvement                The current manuscript exempliﬁes this challenge by pre-
+rate < 50%). This improvement rate quantiﬁes the time              senting the recording of a piece played on open strings on
+instances where case B presents a smaller error than               the cello, and comparing the robot outcome in two similar
+case A. This is calculated as the amount of samples where          playing situations.
+B is closer to the human ground-truth than A divided by                 Inaccuracies in the positioning of the bow on the string
+the total length of the recording. If the same procedure is        lead to imprecisions at the bow–string contact. Note that
+repeated on the segments of the recording that correspond          optical motion capture was not developed for the purpose
+to each played string, the improvement rate can be calcu-          of precise measurements of position but for motion anima-
+lated per string (A3, D3, G2), as also shown in Table 4.           tion in the ﬁlm and video games industry and, subse-
+    If a more strict threshold of 60% improvement rate is          quently, in performance science studies [22]. The main
+set, one can determine whether case B is really an ameliora-       source of position error in the current approach is therefore
+tion compared to case A. As a general observation, one can         found in the acquisition and conversion of motion capture
+conﬁrm that case B performs better than case A, showing            data between systems. To minimise inaccuracies in the posi-
+improvement rates above 60% in the “global” row for all            tion of the bow, one could adapt the setup by bringing the
+considered parameters (top of Tab. 4). Yet when consider-          whole trajectory closer to the strings. To do that, an axis
+ing strings separately, the analysis is not as straightforward.    orthogonal to the tool ﬂange is used and all recorded 3D
+Regarding errors Er and ERMS, a similar behaviour is               data points are moved on that axis (so-called approach
+observed. Namely, for string G2 the adjustment from case           vector). This means that the data are not adapted
+A to case B does not signiﬁcantly affect the outcome               according to the ﬁxed coordinate frame of the robot base,
+(<60%), whereas for strings A3 and D3, case B signiﬁcantly         but depending on the position of the robot tool, the bow
+improves both parameters. The best improvement appears             trajectory can be adapted forward and backward from the
+for string A3, for which case B shows a smaller error than         position of the robot tool. This is achieved by a change in
+case A at 87.3% of the time instances for rcontact and at          the geometrical parameter tz. Comparing two similar
+74.4% for the RMS-envelope.                                        robot-playing situations, which differ only by 1 mm in tz,
+    Regarding the spectral parameters Ea,i, it is shown            it was shown that, as expected, small changes in the robot
+again that the best improvement rate is found at string            control result in great changes in the produced sound.
+D3 (>70% for all Ea,i), but string A3 does not experience               The recorded motion capture data and sound signals
+an improvement from case A to case B at the fundamental            analysed in this study are available under the repository
+frequency and at high frequencies (only the middle frequen-        https://doi.org/10.5281/zenodo.10696680, as well as the
+cies improve Ea,2). String G2 shows a light improvement at         music score. When listening to the three provided sounds,
+all frequency bands. Therefore, the previously observed            it is noteworthy to mention how similar the three conditions
+trend (better match of case B at higher strings than at            appear to the lay listener (despite changes in intonation, and
+lower strings [29]) is not found here. Instead, only the cen-      the directivity of the sound that might have been inﬂuenced
+tral strings D3 and G2 show a certain improvement. In gen-         by the room and the lack of a person behind the instrument).
+eral, these results conﬁrm that robot case B not only              This is particularly remarkable for case B at loud dynamic
+12                                    M. Pàmies-Vilà et al.: Acta Acustica 2024, 8, 45
+
+level. This resemblance between the audio recordings again               in the current conﬁguration. In that case, the RMS
+shows the problematic nature of the current approach to                  value per note appeared as a fair indicator for a
+aim either at a certain level of accuracy in the bow motion,             post-evaluation of the recordings. Yet, we believe that
+the evaluation of the resulting sound, or some perceptual                the RMS-level would not be suitable for a real-time
+evaluation of the performance. The current study suggests                adjustment in the form of a feedback loop. Since the
+that misalignments at the bow positioning are caused by                  system can be adjusted in many ways (positioning of
+the limitations of the robotic system (limits of velocity), as           the bow on the string, its velocity and force, among
+well as by the inaccuracies introduced at the geometrical                others) resulting in a variety of sounds (from no sound
+conversion of the motion capture data (imprecision of the                to raucous sound, passing through the many nuances
+motion capture system and difﬁculty of precise measure-                  of a Helmholtz sound) a simple feedback loop would
+ment of the distances between coordinate frames), yet the                probably fail at controlling the system. In other words,
+instrument can still be played following the bow velocity                two very different sounds could have the same sound
+and trajectories. If the misalignment persists and the                   level. Yet, future work could consider more advanced
+bow-string contact is not guaranteed, the bow strokes might              classiﬁcation strategies (also including spectral aspects
+produce no string oscillation, or a very soft one. This is most          of the sound) to decide how to adapt the system as a
+noticeable at some attack transients, where the robotic                  function of the recorded sound, while respecting the
+performance fails to achieve a clear attack (for example,                mechanical limitations of the system.
+refer to the beginning of the recording in case A).               (III) If the adjustment of the feedback loop were made con-
+    Several parameters to evaluate the result of the repro-             sidering the measurement of the bow force or the force
+duction were scrutinised (position, velocity, distance                  at the bridge [15, 16, 38], one would still need to decide
+between bow and strings, sound RMS values and spectral                  which parameters would be allowed to change when
+parameters). The parameter rcontant, which quantiﬁes the                the loop condition is not matched. Although this
+distance from the bow markers to the cello markers, was                 might be the only feasible feedback-loop solution, it
+shown as the most reliable indicator of the proposed meth-              is an utmost difﬁcult task that might surpass the pos-
+od’s accuracy in positioning the bow on the string. This                sibilities of the system (calculation time, reaction time,
+parameter together with the RMS-values per note allowed                 security to protect the instrument) or might result in
+to compare two robotic performances. We showed that a                   adjustments that differ even more from the ground
+slight modiﬁcation in the geometric data conversion                     truth (original recording with a cellist).
+reduced the error in rcontant signiﬁcantly. It was also made
+clear that adjustments in the system might react differently      To address the current limitations, future work could
+on each played string, improving the outcome only at              involve measuring and assessing the dynamics of the system
+certain bow inclinations.                                         (bow force, or force at the bridge), as well as analysing
+    When considering how to further adjust or continue            which parameters would need to be manipulated to achieve
+developing the system with the help of the presented sen-         the desired force values [38]. Measuring the bow force or the
+sors or additional ones, we take into account three scenar-       force at the bridge would also contribute to the ultimate
+ios: a motion-capture evaluation, a sound measurement,            objective of the setup, which is to replicate and analyse
+and a force sensor feedback loop.                                 human performance under artiﬁcial excitation conditions.
+                                                                  Future research could also evaluate the adjustments
+ (I) If live data transfer of a motion capture system is          required to replicate more advanced playing techniques
+     available, one could consider visualising the parameter      such as spiccato and other off-the-string bowing techniques
+     rcontant to assist in the system adjustments before the      [17], as well as contemporary techniques with wide varia-
+     recordings. Even if motion-capture real-time data            tions in the playing parameters [39].
+     transfer is possible, we do not consider it safe to
+     directly use it in combination with the robot, because
+     of the in-between calculations and the damage that           6 Conclusions
+     could be caused to the robot or to the instrument if
+     an unforeseen error appears. As an example of this               The present study demonstrates that combining optical
+     risk, traditionally, robotics would rather use pre-          motion capture technology with the control of a robotic arm
+     designed robot motions and avoid direct robot control,       can be used to replicate bow movements in a controlled
+     so that after recognising a certain human motion, a          environment. Despite this achievement, the analysis shows
+     given robot motion is activated that avoids exceeding        that slight variations in the playing situation, such as
+     the limitations of the robotic system. In the present        changing one parameter during the data conversion, have
+     methodology, though, the exact bow motions were              a great inﬂuence in the outcome. Towards an evaluation
+     aimed, and the limits of the robotic setup were chal-        of the robotic performance, this paper emphasises the
+     lenged, so that the reproduction would be as close as        importance of a detailed analysis of the motion of the bow
+     possible to the bow movement by a real player.               and the resulting sound. To that aim, several parameters
+ (II) If a motion capture system is not available when the        were calculated regarding the distance from the bow to
+      robot-performance happens, the recorded sound               the strings, the sound amplitude and the spectral content
+      would be the only parameter to evaluate the process         of the sound. It was expected that, since case A seemed to
+                                         M. Pàmies-Vilà et al.: Acta Acustica 2024, 8, 45                                              13
+
+not provide enough contact between the bow and the string,             software A.M.; data collection, curation and visualisation, M.P-
+after approaching the whole bow trajectory to the instru-              V.; writing – original draft, M.P-V.; writing – review and editing,
+ment by 1 mm (case B), an amelioration would be observed.              M.P-V., A.M., E.M., V.C.; funding acquisition, V.C., M.P-V. All
+This amelioration happened signiﬁcantly yet only partially,            authors have read and agreed to the published version of the
+                                                                       manuscript.
+since it implied a positive improvement rate only for some
+strings or only for some of the parameters selected for the            Statement concerning the originality of the work
+evaluation.
+     This paper shows that, although the presented method-                 The authors declare that the work is original. A preliminary
+ology is unable to replicate the exact sound produced by a             study was presented in Forum Acusticum 2023 (Torino, Italy),
+                                                                       after which we were invited to submit an extended version to
+human player without errors (particularly at the attack
+                                                                       the special issue in Acta Acustica.
+transients), it does provide excellent reproduction of the
+movement of the bow. This feature contrasts with previous
+                                                                       References
+bowing machines employing linear programming. The repro-
+duction of human-like bow strokes and their corresponding               1. B. Lawergren: On the motion of bowed violin strings, Acta
+sound, though, remains an open challenge. The limitations                  Acustica united with Acustica 44, 3 (1980) 194–206.
+of the current approach are explained by i) the inaccuracies            2. K. Guettler: On the creation of the Helmholtz motion in
+in the acquisition and geometrical conversion of the motion-               bowed strings, Acta Acustica united with Acustica 88, 6
+capture data and ii) a lack of active control during playing.              (2002) 970–985.
+Because of these limitations, the accumulation of small                 3. J. Woodhouse, P. Galluzzo: The bowed string as we know it
+errors can result in poor bow-string contact or even losing                today, Acta Acustica united with Acustica 90, 4 (2004) 579–589.
+contact. The advantage of the presented robotic setup is                4. A. Askenfelt: Measurement of bow motion and bow force in
+                                                                           violin playing, Journal of the Acoustical Society of America
+that it can effortlessly repeat desired sequences at the touch
+                                                                           80, 4 (1986) 1007–1015.
+of a button. Since the proposed method departs from tradi-              5. A. Askenfelt: Measurement of the bowing parameters in
+tional robotics and directly transmits almost unaltered                    violin playing. II: bow–bridge distance, dynamic range, and
+motion capture data to the robot, the limitations of the                   limits of bow force, Journal of the Acoustical Society of
+robotic setup are challenged. This unconventional approach                 America 86, 2 (1989) 503–516.
+to instructing the robotic arm at such a high rate of change            6. M. Demoucron: On the control of virtual violins – physical
+is, to the best of our understanding, essential in achieving the           modelling and control of bowed string instruments, PhD
+desired human-like outcome. As advances in technology con-                 thesis, Université Pierre et Marie Curie – Paris VI; Royal
+tinue to provide further hardware and software possibilities,              Institute of Technology, Stockholm, 2008.
+future research could continue exploring ways to assist the             7. E. Schoonderwaldt: The violinist’s sound palette: spectral
+analysis of musical expression during bowed-string musical                 centroid, pitch ﬂattening and anomalous low frequencies,
+                                                                           Acta Acustica united with Acustica 95, 5 (2009) 901–914.
+performance using mechanical devices.
+                                                                        8. E. Maestre: Modeling instrumental gestures: an analysis/
+                                                                           synthesis framework for violin bowing, PhD thesis, Depart-
+Acknowledgments                                                            ment of Information and Communication Technologies,
+   We would like to acknowledge Anna Scheiblauer for playing               Universitat Pompeu Fabra, Barcelona, 2009.
+the cello in this study, as well as Alessio Lampis, Werner Goebl        9. C.V. Raman: On the mechanical theory of the vibrations of
+and Sara D’Amario for their help and feedback during the prepa-            bowed strings and of musical instruments of the violin family,
+ration of the experimental setup.                                          with experimental veriﬁcation of the results, part I, Indian
+                                                                           Association for the Cultivation of Science 15 (1918) 243–276.
+Funding                                                                10. J.C. Schelleng: The bowed string and the player, Journal of
+                                                                           the Acoustical Society of America 53, 1 (1973) 26–41.
+    This research was funded in whole or in part by the Austrian       11. A. Cronhjort: A computer-controlled bowing machine
+Science Fund (FWF) [10.55776/{P34852 & T1295}]. For open                   (mums), Speech, Music and Hearing Quarterly Progress
+access purposes, the authors have applied a CC BY public                   and Status Report 33, 2–3 (1992) 61–66.
+copyright license to any author-accepted manuscript version aris-      12. P. Galluzzo, J. Woodhouse: High-performance bowing
+ing from this submission.                                                  machine tests of bowed-string transients, Acta Acustica
+                                                                           united with Acustica 100, 1 (2014) 139–153.
+Conﬂicts of interest                                                   13. R. Mores: Precise cello bowing pendulum, in: Proceedings of
+                                                                           Third Vienna Talk on Music Acoustics, vol. 106, Vienna,
+    The authors declare no conﬂict of interest.                            Austria, 16–19 Sept 2015.
+                                                                       14. T. Rossing: The Science of String Instruments, Springer, New
+Data availability statement                                                York, 2010.
+     The research data associated with this article are available in   15. E. Schoonderwaldt, M. Demoucron: Extraction of bowing
+Zenodo with a Creative Commons Attribution 4.0 International               parameters from violin performance combining motion cap-
+license, under the reference [40].                                         ture and sensors, Journal of the Acoustical Society of
+                                                                           America 126, 5 (2009) 2695–2708.
+                                                                       16. A. Lampis, A. Mayer, V. Chatziioannou: Assessing playabil-
+Author contribution statement                                              ity limits of bowed-string transients using experimental
+   Conceptualization and methodology, M.P-V., A.M.; algorithm              measurements, Acta Acustica (2024). https://doi.org/
+implementation, M.P-V., A.M., E.M., V.C.; hardware and                     10.1051/aacus/2024034.
+14                                      M. Pàmies-Vilà et al.: Acta Acustica 2024, 8, 45
+
+17. A. Askenfelt, K. Guettler: The bouncing bow: An experi-           29. M. Pàmies-Vilà, E. Matusiak, V. Chatziioannou, A. Mayer:
+    mental study, Journal of the Catgut Acoustical Society 3              A cello bowing playback device? Motion capture meets
+    (1998) 3–8.                                                           robotic arm, in: 10th Convention of the European Acoustics
+18. A. Mayer, A. Lampis: A versatile monochord setup: An                  Association, Turin, Italy, 11–15 September, 2023.
+    industrial robotic arm as bowing and plucking device, IWK         30. Universal Robots: File: UR5e Technical Speciﬁcations, UR5e
+    Tech Report 1-2024, University of Music and Performing Arts           Product Fact Sheet – July 2021, 2021. Available at https://
+    Vienna, 2024. https://doi.org/10.21939/iwk-tech-report-1-2024.        www.universal-robots.com/products/ur5-robot/ (accessed
+19. S. Kemper: Locating creativity in differing approaches to             06 February, 2024).
+    musical robotics, Frontiers in Robotics and AI 8 (2021) 647028.   31. P.I. Corke, W. Jachimczyk, R. Pillat: Robotics, vision and
+20. K. Shibuya, S. Matsuda, A. Takahara: Toward developing a              control: fundamental algorithms in MATLAB, vol. 73,
+    violin playing robot-bowing by anthropomorphic robot arm              Springer, 2011.
+    and sound analysis, in: Proceedings of 16th IEEE Int.             32. A.R. Jensenius: Methods for studying music-related body
+    Symposium on Robot and Human Interactive Communication,               motion, in: R. Bader (Ed.), Springer handbook of systematic
+    Jeju, Korea (South), 26–29 August, 2007, IEEE, pp. 763–768.           musicology, Springer, Berlin, Heidelberg, 2018, pp. 805–818.
+21. S. Jordà: Afasia: the ultimate homeric oneman-multimedia-         33. M. Pàmies-Vilà, A. Scheiblauer, A. Mayer, V. Chatziioannou:
+    band, in: Proceedings of New Interfaces for Musical Expres-           A framework for the analysis of bowing actions with increased
+    sion, NIME-02, Dublin, Ireland, May 24–26, Media Lab                  realisticness, in: Proceedings of the 24th International Congress
+    Europe, 2002, pp. 132–137.                                            on Acoustics, Gyeongju, Korea, 24–28, October, 2022.
+22. M.M. Wanderley: Motion capture of music performances, in:         34. Universal robots support: Real-time data exchange (RTDE)
+    G.E. McPherson (Ed.), The Oxford handbook of music                    guide, 2022. Available at https://www.universal-robots.com/
+    performance, Oxford University Press, 2022, pp. 465–494.              articles/ur/interface-communication/real-time-data-exchange-
+23. J. Van der Linden, E. Schoonderwaldt, J. Bird, R. Johnson:            rtde-guide/ (accessed 22 January, 2024).
+    Musicjacket-combining motion capture and vibrotactile             35. A. Mayer, M. Pàmies-Vilà, V. Chatziioannou: The universal
+    feedback to teach violin bowing, IEEE Transactions on                 robots real-time data exchange (RTDE) and LabVIEW, Tech-
+    Instrumentation and Measurement 60, 1 (2010) 104–113.                 nical report, Department of Music Acoustics – Wiener Klangstil
+24. J. Rozé, M. Aramaki, R. Kronland-Martinet, S. Ystad:                  (IWK), 2022. https://doi.org/10.13140/RG.2.2.14177.99684.
+    Exploring the perceived harshness of cello sounds by morph-       36. A. Scheiblauer, A. Mayer, M. Pàmies-Vilà: Investigating the
+    ing and synthesis techniques, Journal of the Acoustical               cello position, bow motion and cellist posture using motion
+    Society of America 141, 3 (2017) 2121–2136.                           capture, Proceedings of Meetings on Acoustics, Fourth
+25. T. Wofford: Study of the interaction between the musician             Vienna Talk on Music Acoustics, 49 (2022) 035013.
+    and the instrument. Application to the playability of the         37. H.F. Pollard, E.V. Jansson: A tristimulus method for the
+    cello, PhD thesis, Sorbonne Université, Paris, 2018.                  speciﬁcation of musical timbre, Acta Acustica united with
+26. J. Rozé, M. Aramaki, R. Kronland-Martinet, S. Ystad: A                Acustica 51, 3 (1982) 162–171.
+    technological platform for analyzing and improving musiciansâ     38. A. Mayer, M. Pamies-Vila, V. Chatziioannou: Ein Roboter-
+    sound-gesture interactions, in: e-Forum Acusticum 2020, Lyon,         arm spielt Cello, OCG Journal 48, 4 (2023) 16–19.
+    France, 7–11 December, 2020, pp. 439–447.                         39. E. Fallowﬁeld: Cello map: a handbook of cello technique for
+27. I. Wollman, C. Fritz, J. Poitevineau: Inﬂuence of vibrotactile        performers and composers, PhD thesis, University of Birm-
+    feedback on some perceptual features of violins, Journal of           ingham, UK, 2010.
+    the Acoustical Society of America 136, 2 (2014) 910–921.          40. M. Pàmies-Vilà, A. Mayer, E. Matusiak, V. Chatziioannou:
+28. A. Askenfelt, E.V. Jansson: On vibration sensation and                Dataset to: A method for the reproduction of cello bow
+    ﬁnger touch in stringed instrument playing, Music Percep-             kinematics using a robotic arm and motion capture, Zenodo.
+    tion 9, 3 (1992) 311–349.                                             https://doi.org/10.5281/zenodo.10696680.
+
+
+
+ Cite this article as: Pàmies-Vilà M. Mayer A. Matusiak E. & Chatziioannou V. 2024. A method for the reproduction of cello bow
+ kinematics using a robotic arm and motion capture. Acta Acustica, 8, 45.
+

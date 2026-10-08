@@ -1,0 +1,8 @@
+{
+  "accel_max": 6,
+  "model": "t_motion = c0 + c1 * t_commanded",
+  "c0": 0.05174383376929297,
+  "c1": 0.9536313903345164,
+  "residual_sd_s": 0.02089849732034677,
+  "dispatch_overhead_s": 0.06409859657287598
+}

@@ -1,0 +1,90 @@
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.claude/settings.local.json
+
+# Python environments and caches
+.venv/
+.venv*/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.matplotlib_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+
+# Training and experiment outputs
+/checkpoints/
+/rl/checkpoints*/
+tb_logs/
+runs/
+*.log
+*.wav
+*.npy
+*.npz
+!tests/fixtures/**/*.wav
+!tests/fixtures/**/*.npy
+
+# Robot performance captures
+/BaselineControls/performances/
+
+# Large/private sound-classifier datasets and annotation exports. Keep the
+# scripts and schema documentation in Git; distribute data separately.
+/SoundClassifier/Data_Collection/dataset*/
+/SoundClassifier/Data_Collection/label_studio_data/
+/SoundClassifier/Data_Collection/label_studio_tasks*/
+/SoundClassifier/Data_Collection/public_annotation_packages*/
+/SoundClassifier/Data_Collection/mic_test_output/
+
+# Blinded sweep takes: ~4 MB of wav each, regenerable by rl/param_sweep.py
+rl/sweeps/
+
+# experiment deliverables and listening-test packs live outside git (backed up separately)
+/deliverables_20260824/
+/listening/
+
+# Experiment exports and local inputs (models and score assets remain versioned).
+/private-data/
+/annotation_results/
+/rl/gate*.json
+/rl/sweep*.json
+/rl/reward_noise*.json
+/SoundClassifier/Data_Collection/metadata*.jsonl
+/SoundClassifier/figures/
+/SoundClassifier/checkpoints/*_metrics.json
+/SoundClassifier/PSEUDO_CLASSIFIER_PRESENTATION_WRITEUP.md
+/BaselineControls/twinkle_output.txt
+/RESULTS.md
+/writeup-aug*.md
+*.local.json
+
+# Analysis outputs; keep analysis source, interface docs and model provenance.
+/analysis/acoustic_diagnostics_20260906/*.csv
+/analysis/acoustic_diagnostics_20260906/*.json
+/analysis/acoustic_diagnostics_20260906/*_out.txt
+/analysis/acoustic_diagnostics_20260906/*.png
+/analysis/external_judges/results/
+/analysis/reward_reweight_analysis/smoke_out/
+/analysis/external_eval/vienna_2024/*.csv
+/analysis/external_eval/vienna_2024/*.json
+!/analysis/external_eval/vienna_2024/MODEL_MANIFEST.json
+/analysis/external_eval/vienna_2024/*.jsonl
+/analysis/external_eval/vienna_2024/*.png
+/analysis/external_eval/vienna_2024/REPORT.md
+/analysis/external_eval/vienna_2024/plot_cache/
+/analysis/external_eval/vienna_2024/sources/VIE01_Execution_Plan.input.md
