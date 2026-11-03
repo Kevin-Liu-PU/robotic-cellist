@@ -1,0 +1,31 @@
+# SYNTHETIC EXAMPLE ONLY. Replace all values with measured/CAD values.
+units: metres
+frames:
+  cello_frame_convention: "x across strings, y bridge-to-fingerboard, z away from top"
+bow:
+  # Hair endpoints in tool coordinates, ordered frog -> tip.
+  frog_tool: [0.000, -0.300, 0.000]
+  tip_tool:  [0.000,  0.300, 0.000]
+cello:
+  fiducials:
+    F1: [-0.120, -0.050, 0.000]
+    F2: [ 0.120, -0.050, 0.000]
+    F3: [-0.120,  0.220, 0.015]
+    F4: [ 0.120,  0.220, 0.015]
+  strings:
+    - id: C
+      bridge_pt: [-0.030, 0.000, 0.020]
+      far_pt:    [-0.030, 0.300, 0.020]
+      normal:    [0.000, 0.000, 1.000]
+    - id: G
+      bridge_pt: [-0.010, 0.000, 0.025]
+      far_pt:    [-0.010, 0.300, 0.025]
+      normal:    [0.000, 0.000, 1.000]
+    - id: D
+      bridge_pt: [0.010, 0.000, 0.030]
+      far_pt:    [0.010, 0.300, 0.030]
+      normal:    [0.000, 0.000, 1.000]
+    - id: A
+      bridge_pt: [0.030, 0.000, 0.025]
+      far_pt:    [0.030, 0.300, 0.025]
+      normal:    [0.000, 0.000, 1.000]
