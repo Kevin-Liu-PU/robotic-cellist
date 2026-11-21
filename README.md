@@ -33,10 +33,22 @@ The optional `hardware` and `labeling` extras add robot and annotation dependenc
 The platform setup scripts also install dependencies and run tests; inspect their
 actions before using them.
 
+### Run a mock episode
+
+```bash
+python usage_example.py
+```
+
+This runs the bundled `MIDI-Files/t1.mid` score with the zero-residual planner,
+a mock executor, and a mock scorer. It prints per-stroke results without
+connecting to a robot or microphone, loading a policy or classifier checkpoint,
+or training a policy.
+
 ## Entry points
 
 | Path | Purpose |
 | --- | --- |
+| `usage_example.py` | One no-hardware baseline episode. |
 | `rl/train_piece.py` | Whole-piece residual SAC training; supports `--mock`. |
 | `rl/play_piece.py` | Score playback through the environment. |
 | `rl/perform.py` | Policy performance and hardware-session integration. |
@@ -121,29 +133,15 @@ unless absolute. Checkpoint hashes are rechecked before execution.
 
 ## Validation and limitations
 
-Limited checks used Python 3.12.10:
+The Python 3.12.10 release check recorded 59 passing helper tests, two skips
+for unavailable private fixtures, and two snapshot tests blocked by environment
+imports. Static parsing passed for 106 Python and six JSON files. See the
+[release check details](https://github.com/Kevin-Liu-PU/robotic-cellist/blob/9468eddc0b8fb6d43fa7a1dad7a269dc7e0ad59a/README.md#L122-L146).
 
-| Inspected test scope | Passed | Skipped | Boundary-blocked errors |
-| --- | ---: | ---: | ---: |
-| Five helper suites | 59 | 2 | 2 |
-| `test_perform_audit.py` alone, also included above | 15 | 2 | 2 |
-
-Static parsing passed for 106 Python files and 6 JSON files.
-
-The two snapshot-test errors occur when `write_snapshot` attempts to import
-`rl.piece_env`. The validation guard blocks environment, hardware and model
-imports, network access and subprocess execution. The real environment was not
-replaced with a stub. The two skips require unavailable private C1 fixtures.
-No assertion failures were observed; the blocked cases remain unvalidated.
-
-The full pytest suite was not run: pytest, Gymnasium, soundfile, sounddevice,
-mido, PyTorch, Stable-Baselines3 and librosa were absent. Python 3.11 was
-unavailable.
-
-Robot drivers, hardware motion, mock or hardware training, model inference and full
-environment integration were not exercised. Historical zsh recipes received static inspection;
-their runtime behaviour was not validated.
-The legacy standalone runner's connection and motion behaviour is also unvalidated.
+That check did not cover the full test suite, model inference, training, or
+hardware integration. The legacy runner and historical shell recipes were
+inspected but not run. The mock example checks the software path only; it does
+not evaluate sound quality or establish hardware readiness.
 
 ## Release boundaries
 
